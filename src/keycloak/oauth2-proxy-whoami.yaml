@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: oauth2-proxy
+  name: oauth2-proxy
+  namespace: whoami
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        k8s-app: oauth2-proxy
+    spec:
+      containers:
+        - args:
+            - --provider=keycloak-oidc
+            - --client-id=homekube
+            - --client-secret=jlAtRQ02vXS2Q2mvReQ0xVWIAihrmwiy
+            - --cookie-secret=NUho_tfSpR0o747ydawdLARYB4D6ZVYImkIg6bfvLh4=
+            - --redirect-url=https://whoami.auth.homekube.org
+            - --oidc-issuer-url=https://keycloak.homekube.org/realms/homekube
+            - --email-domain=*
+            #- --allowed-role=optional
+            #- --allowed-role=client:id:client role
+          image: quay.io/oauth2-proxy/oauth2-proxy:latest
+          imagePullPolicy: Always
+          name: oauth2-proxy
+          ports:
+            - containerPort: 4180
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: oauth2-proxy
+  name: oauth2-proxy
+  namespace: whoami
+spec:
+  ports:
+    - name: http
+      port: 4180
+      protocol: TCP
+      targetPort: 4180
+  selector:
+    k8s-app: oauth2-proxy
