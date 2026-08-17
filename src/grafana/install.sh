@@ -16,7 +16,6 @@ fi
 echo "Install grafana"
 
 kubectl create namespace grafana
-envsubst < create-storage.yaml | kubectl apply -f -
 
 # provide default admin credentials e.g. admin/admin1234
 kubectl create secret generic grafana-creds -n grafana \
@@ -25,8 +24,8 @@ kubectl create secret generic grafana-creds -n grafana \
 
 helm upgrade --install grafana grafana/grafana -n grafana --version=8.5.0 \
   --set persistence.enabled=true \
-  --set persistence.existingClaim=grafana-pvc \
-  --set persistence.subPath=grafana \
+  --set persistence.storageClass=managed-nfs-storage \
+  --set persistence.size=10Gi \
   --set admin.existingSecret=grafana-creds \
   -f datasource-dashboards.yaml
 

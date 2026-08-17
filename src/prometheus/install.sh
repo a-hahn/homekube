@@ -4,7 +4,6 @@ if kubectl get ns | grep -q "^prometheus"; then
   echo "Skipping installation of prometheus because namespace already exists"
   echo "If you want to reinstall execute: "
   echo "'kubectl delete ns prometheus'"
-  echo "'kubectl delete pv prometheus-pv'"
   exit 1
 else
 
@@ -15,21 +14,18 @@ fi
 
 echo "Install prometheus"
 kubectl create namespace prometheus
-envsubst < create-storage.yaml | kubectl apply -f -
-
-# Wait for PVC to be bound
-echo "Waiting for PVC to be bound..."
-kubectl wait --for=condition=bound pvc prometheus-pvc -n prometheus --timeout=60s
 
 helm install prometheus -n prometheus --version=27.1.0 \
   --set alertmanager.enabled=false \
   --set pushgateway.enabled=false \
-  --set server.persistentVolume.existingClaim=prometheus-pvc \
-  --set server.persistentVolume.subPath=prometheus \
+  --set server.persistentVolume.enabled=true \
+  --set server.persistentVolume.storageClass=managed-nfs-storage \
+  --set server.persistentVolume.size=10Gi \
   prometheus-community/prometheus
+
 echo "Installation done prometheus"
 
-#kubectl apply -f ~/homekube/src/prometheus/ingress-prometheus.yaml
+# Ingress
 cat << EOF | envsubst | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -51,4 +47,4 @@ spec:
                   number: 80
 EOF
 echo "Installation done prometheus"
-fi # end of installation of prometheus
+fi

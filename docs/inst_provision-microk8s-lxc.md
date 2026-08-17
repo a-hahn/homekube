@@ -12,6 +12,9 @@ so we can be sure that our macvlan network settings are honored:
 
 ```
 lxc launch -p default -p microk8s -p macvlan ubuntu:24.04 homekube
+
+# alternative: minimal cloud image:
+# lxc launch -p default -p macvlan ubuntu-minimal:24.04 homekube
 ```
 
 Lets check if we were successful ``lxc list`` results in something like
