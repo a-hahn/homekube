@@ -17,6 +17,10 @@ echo "Install prometheus"
 kubectl create namespace prometheus
 envsubst < create-storage.yaml | kubectl apply -f -
 
+# Wait for PVC to be bound
+echo "Waiting for PVC to be bound..."
+kubectl wait --for=condition=bound pvc prometheus-pvc -n prometheus --timeout=60s
+
 helm install prometheus -n prometheus --version=27.1.0 \
   --set alertmanager.enabled=false \
   --set pushgateway.enabled=false \

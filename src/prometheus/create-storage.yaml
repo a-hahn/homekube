@@ -15,7 +15,6 @@ spec:
   nfs:
     server: ${HOMEKUBE_NFS_SERVER_URL}
     path: "${HOMEKUBE_NFS_SERVER_PATH}"
-  storageClassName: managed-nfs-storage
 
 ---
 
@@ -25,7 +24,6 @@ metadata:
   name: prometheus-pvc
   namespace: prometheus
 spec:
-  storageClassName: managed-nfs-storage
   selector:
     matchLabels:  #Select a volume with this labels
       app: prometheus
