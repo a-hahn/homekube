@@ -52,6 +52,10 @@ then
   exit 2
 fi
 
+# Use local http://httpbin.kubernetes-dashboard.svc.cluster.local:8080
+# instead of public https://httpbin.org which is down temporarily
+kubectl apply -f httpbin.yaml
+
 cat << EOF | envsubst | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: Ingress

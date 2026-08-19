@@ -5,7 +5,7 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/auth-url: https://httpbin.org/basic-auth/demo/demo
+    nginx.ingress.kubernetes.io/auth-url: "http://httpbin.kubernetes-dashboard.svc.cluster.local:8080/basic-auth/demo/demo"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header "Authorization" "Bearer ${HOMEKUBE_DASHBOARD_TOKEN}" ;
   name: ingress-dashboard-service
